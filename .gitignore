@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+.venv/
+venv/
+env/
+ENV/
+pip-wheel-metadata/
+*.egg-info/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# Build and cache output
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+
+# Local data and media
+*.db
+*.sqlite
+*.sqlite3
+*.wav
+*.mp3
+*.mp4
+*.mov
+*.avi
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
