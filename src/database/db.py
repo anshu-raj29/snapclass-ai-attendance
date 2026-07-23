@@ -49,22 +49,36 @@ def create_subject(subject_code, name, section, teacher_id):
     return response.data
 
 def get_teacher_subjects(teacher_id):
-    response = supabase.table('subjects').select("*, subject_students(count), attendance_logs(timestamp)").eq("teacher_id", teacher_id).execute()
-    subjects = response.data
+    # Get all subjects for this teacher
+    response = (
+        supabase
+        .table("subjects")
+        .select("*")
+        .eq("teacher_id", teacher_id)
+        .execute()
+    )
 
+    subjects = response.data or []
 
     for sub in subjects:
-        sub['total_students'] = sub.get("subject_students", [{}])[0].get('count', 0) if sub.get('subject_students') else 0
-        attendance = sub.get('attendance_logs', [])
-        unique_sessions = len(set(log['timestamp'] for log in attendance))
-        sub['total_classes'] = unique_sessions
+        subject_id = sub.get("subject_id")
 
+        # Count students enrolled in this subject
+        student_response = (
+            supabase
+            .table("subject_students")
+            .select("id", count="exact")
+            .eq("subject_id", subject_id)
+            .execute()
+        )
 
-        sub.pop('subject_student', None)
-        sub.pop('attendance_logs', None)
+        sub["total_students"] = student_response.count or 0
+
+        # Temporarily set classes to 0
+        # until we confirm the actual attendance_logs columns
+        sub["total_classes"] = 0
 
     return subjects
-
 
 def  enroll_student_to_subject(student_id, subject_id):
     data = {'student_id': student_id, "subject_id": subject_id}
